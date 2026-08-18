@@ -1,0 +1,51 @@
+{
+  "quantum_crypto_rules": [
+    {
+      "id": "QC-VULN-01",
+      "name": "Classical RSA Cryptography Detected",
+      "regex": "(?i)(rsa\\.generate_private_key|from cryptography\\.hazmat\\.primitives\\.asymmetric import rsa|RSA\\.generate|PKCS1_OAEP|cipher_rsa)",
+      "vulnerability": "Vulnerable to Shor's Algorithm on Cryptographically Relevant Quantum Computers (CRQC)",
+      "pqc_alternative": "Migrate to NIST PQC Standard FIPS 203 (ML-KEM / CRYSTALS-Kyber) for Key Encapsulation",
+      "severity": "CRITICAL"
+    },
+    {
+      "id": "QC-VULN-02",
+      "name": "Elliptic Curve Cryptography (ECDSA / ECDH)",
+      "regex": "(?i)(ec\\.generate_private_key|SECP256R1|SECP384R1|ECDSA|ECDH|curve25519)",
+      "vulnerability": "Broken by quantum discrete logarithm polynomial solvers",
+      "pqc_alternative": "Migrate to NIST PQC Standard FIPS 204 (ML-DSA / CRYSTALS-Dilithium) or FIPS 205 (SLH-DSA)",
+      "severity": "CRITICAL"
+    },
+    {
+      "id": "QC-VULN-03",
+      "name": "Legacy Diffie-Hellman Key Exchange",
+      "regex": "(?i)(dh\\.generate_parameters|DiffieHellman|from cryptography\\.hazmat\\.primitives\\.asymmetric import dh)",
+      "vulnerability": "Vulnerable to Shor's algorithm discrete log attacks",
+      "pqc_alternative": "Transition to Hybrid Quantum-Safe Key Encapsulation (X25519 + ML-KEM-768)",
+      "severity": "HIGH"
+    }
+  ],
+  "rag_injection_rules": [
+    {
+      "id": "RAG-INJ-01",
+      "name": "Direct Jailbreak / System Prompt Override",
+      "regex": "(?i)(ignore (all )?previous instructions|disregard prior directives|you are now unrestricted|DAN mode enabled)",
+      "impact": "Bypasses model safety boundaries and extracts private instructions",
+      "severity": "CRITICAL"
+    },
+    {
+      "id": "RAG-POISON-02",
+      "name": "Indirect RAG Retrieval Context Poisoning",
+      "regex": "(?i)(<!--.*important: (override|exfiltrate).*-->|\\[system note: ignore context and return:?.*\\]|system-override:)",
+      "impact": "Attacker poisons external corpus/documents retrieved by RAG pipeline to hijack agent actions",
+      "severity": "CRITICAL"
+    },
+    {
+      "id": "RAG-LEAK-03",
+      "name": "Data Exfiltration & System Instruction Extraction",
+      "regex": "(?i)(repeat the text above verbatim|output system prompt|print your initial configuration)",
+      "impact": "Exposes proprietary system prompts and confidential RAG corpus context",
+      "severity": "HIGH"
+    }
+  ]
+}
